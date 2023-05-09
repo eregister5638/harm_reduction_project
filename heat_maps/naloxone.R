@@ -94,7 +94,8 @@ sum_wash <- sum(as.numeric(wash_od$Overdoses), na.rm = TRUE)
 county_name = c("Providence County, Rhode Island", "Newport County, Rhode Island", "Washington County, Rhode Island", "Kent County, Rhode Island", "Bristol County, Rhode Island")
 GEOID = c(44007, 44005, 44009, 44003, 44001)
 od_sums = c(sum_prov, sum_new, sum_wash, sum_kent, sum_brist)
-county_od = data.frame(county_name, Overdoses = od_sums, GEOID = as.character(GEOID))
+od_per_hund = c((sum_prov*100000)/656672,(sum_new*100000)/85525,(sum_wash*100000)/129735,(sum_kent*100000)/169345,(sum_brist*100000)/50672)#Overdoses rates per 100000
+county_od = data.frame(county_name, Overdoses = od_per_hund, GEOID = as.character(GEOID))
 
 # Convert Overdoses to numeric variable
 county_od$Overdoses <- as.numeric(county_od$Overdoses)

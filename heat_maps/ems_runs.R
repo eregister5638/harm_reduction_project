@@ -91,10 +91,11 @@ sum_wash <- sum(as.numeric(wash_od$Overdoses), na.rm = TRUE)
 #fips <- get_acs(geography = "county", variables = "B01001_001", state = "RI", geometry = TRUE)
 
 # Create data frame of municipality overdose data
-county_name = c("Providence County, Rhode Island", "Newport County, Rhode Island", "Washington County, Rhode Island", "Kent County, Rhode Island", "Bristol County, Rhode Island")
+county_name = c("Providence County", "Newport County", "Washington County", "Kent County", "Bristol County")
 GEOID = c(44007, 44005, 44009, 44003, 44001)
 od_sums = c(sum_prov, sum_new, sum_wash, sum_kent, sum_brist)
-county_od = data.frame(county_name, Overdoses = od_sums, GEOID = as.character(GEOID))
+od_per_hund = c((sum_prov*100000)/656672,(sum_new*100000)/85525,(sum_wash*100000)/129735,(sum_kent*100000)/169345,(sum_brist*100000)/50672)#Overdoses rates per 100000
+county_od = data.frame(county_name, Overdoses = od_per_hund, GEOID = as.character(GEOID))
 
 # Convert Overdoses to numeric variable
 county_od$Overdoses <- as.numeric(county_od$Overdoses)
@@ -131,10 +132,20 @@ counties_sf <- counties_sf %>%
 
 
 ggplot() +
-  geom_sf(county_od,
+  geom_sf(data = county_od,
           mapping = aes(fill = Overdoses, geometry = geometry),
-          color = "white", size = 0.05) +
-  coord_sf(datum = NA) +
+          color = "white",
+          size = 0.05,
+          stat = "sf") +
+  scale_fill_continuous(low = "lightgreen", high = "darkgreen") + # set the low color to white and high color to green
+  geom_sf_text(data = county_od,
+               aes(geometry = geometry, label = county_name),
+               size = 3,
+               color = "black") +
   labs(fill = "EMS Runs",
-       title = paste0("Number of Opioid OD related EMS Runs by County(2022)"))+
+       title = paste0("EMS Runs per 100,000 by Rhode Island County (2022)"))+
   theme_void()
+
+
+
+
